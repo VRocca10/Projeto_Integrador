@@ -112,7 +112,7 @@ src/
 
 As telas e os dados específicos ficam junto da feature correspondente. O layout do painel, os componentes visuais compartilhados e a comunicação HTTP ficam em áreas comuns. Assim, é possível desenvolver cada perfil sem concentrar toda a aplicação em um único arquivo.
 
-O TypeScript foi introduzido de forma gradual: os pontos centrais de autenticação, sessão e serviços HTTP já usam tipos, enquanto as telas existentes em JavaScript podem ser migradas conforme forem evoluídas. A configuração permite essa convivência durante a transição.
+O TypeScript foi introduzido de forma gradual: os pontos centrais de autenticação, sessão, serviços HTTP e formatação de data do painel já usam tipos, enquanto as telas existentes em JavaScript podem ser migradas conforme forem evoluídas. A configuração permite essa convivência durante a transição.
 
 ## Integração futura
 

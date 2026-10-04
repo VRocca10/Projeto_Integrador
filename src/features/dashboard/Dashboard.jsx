@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Brand } from "../../components/Brand.jsx";
 import { roleNavigation, roles } from "../../data/roles.js";
 import { getAdminModuleDescription } from "../admin/AdminFeature.jsx";
 import { getStudentModuleDescription } from "../aluno/StudentFeature.jsx";
 import { getProfessorModuleDescription } from "../professor/ProfessorFeature.jsx";
 import FeatureContent from "./FeatureContent.jsx";
+import { getDashboardDateTime } from "../../lib/dateTime";
 import {
   Bell,
   CalendarDays,
@@ -21,6 +22,7 @@ export default function Dashboard({ email, name, role, onLogout }) {
   const [activeNav, setActiveNav] = useState(role === "aluno" ? "Meu painel" : "Visão geral");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoutError, setLogoutError] = useState("");
+  const [dateTime, setDateTime] = useState(() => getDashboardDateTime());
   const menuItems = roleNavigation[role] ?? roleNavigation.admin;
   const roleLabel = roles[role]?.label ?? roles.admin.label;
   const isAdmin = role === "admin";
@@ -31,8 +33,16 @@ export default function Dashboard({ email, name, role, onLogout }) {
     : role === "professor"
       ? getProfessorModuleDescription(activeNav)
       : getStudentModuleDescription(activeNav);
-  const displayName = name || email.split("@")[0].split(/[._-]/)[0];
+  const displayName = (name || email.split("@")[0].split(/[._-]/)[0]).split(/\s+/)[0];
   const firstName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setDateTime(getDashboardDateTime());
+    }, 60_000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
 
   function selectNav(label) {
     setActiveNav(label);
@@ -197,9 +207,14 @@ export default function Dashboard({ email, name, role, onLogout }) {
           )}
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="text-sm text-slate-500">Domingo, 4 de outubro de 2026</p>
+              <p className="text-sm capitalize text-slate-500">{dateTime.dateLabel}</p>
               <h1 className="mt-1.5 text-[27px] font-bold tracking-tight text-slate-900">
-                {isHome ? <>Bom dia, {firstName}! <span aria-hidden="true">☀️</span></> : activeNav}
+                {isHome ? (
+                  <>
+                    {dateTime.greeting}, {firstName}!{" "}
+                    <span aria-hidden="true">{dateTime.greeting === "Boa noite" ? "🌙" : "☀️"}</span>
+                  </>
+                ) : activeNav}
               </h1>
               <p className="mt-1 text-sm text-slate-500">
                 {isHome
