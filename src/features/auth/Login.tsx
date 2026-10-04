@@ -1,6 +1,9 @@
 import { useState } from "react";
+import type { FormEvent } from "react";
 import { Brand } from "../../components/Brand.jsx";
 import { roles } from "../../data/roles.js";
+import { roleKeys } from "./auth.types";
+import type { Role } from "./auth.types";
 import {
   ArrowRight,
   CircleHelp,
@@ -9,16 +12,23 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-export default function Login({ onLogin, error, isLoading, isApiMode }) {
-  const [showPassword, setShowPassword] = useState(false);
-  const [selectedRole, setSelectedRole] = useState("admin");
+interface LoginProps {
+  onLogin: (email: string, password: string, role: Role) => void | Promise<void>;
+  error: string;
+  isLoading: boolean;
+  isApiMode: boolean;
+}
 
-  function handleSubmit(event) {
+export default function Login({ onLogin, error, isLoading, isApiMode }: LoginProps) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<Role>("admin");
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     onLogin(
-      form.get("email").toString(),
-      form.get("password").toString(),
+      String(form.get("email") ?? ""),
+      String(form.get("password") ?? ""),
       selectedRole,
     );
   }
@@ -98,11 +108,11 @@ export default function Login({ onLogin, error, isLoading, isApiMode }) {
               <select
                 id="role"
                 value={selectedRole}
-                onChange={(event) => setSelectedRole(event.target.value)}
+                onChange={(event) => setSelectedRole(event.target.value as Role)}
                 className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-700 outline-none transition focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10"
               >
-                {Object.entries(roles).map(([value, role]) => (
-                  <option key={value} value={value}>{role.label}</option>
+                {roleKeys.map((value) => (
+                  <option key={value} value={value}>{roles[value].label}</option>
                 ))}
               </select>
             </div>
@@ -174,7 +184,8 @@ export default function Login({ onLogin, error, isLoading, isApiMode }) {
                 <span className="h-px flex-1 bg-slate-100" />
               </div>
               <div className="grid grid-cols-3 gap-2">
-                {Object.entries(roles).map(([value, role]) => {
+                {roleKeys.map((value) => {
+                  const role = roles[value];
                   const Icon = role.icon;
                   return (
                     <button

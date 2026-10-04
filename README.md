@@ -21,6 +21,7 @@ Ainda não há autenticação real, persistência de dados ou conexão ativa com
 ## Tecnologias
 
 - React 18 para componentes e interface.
+- TypeScript para tipagem gradual dos serviços, autenticação e novas funcionalidades.
 - Vite para desenvolvimento local e geração do build.
 - Tailwind CSS 4 para estilos responsivos.
 - Lucide React para ícones.
@@ -61,7 +62,8 @@ O servidor atualiza a página automaticamente quando arquivos do projeto são al
 
 ```bash
 npm run dev      # inicia o servidor local de desenvolvimento
-npm run build    # gera os arquivos otimizados de produção na pasta dist
+npm run typecheck # verifica os arquivos TypeScript
+npm run build    # verifica os tipos e gera o build otimizado na pasta dist
 npm run preview  # serve localmente o build de produção
 ```
 
@@ -76,7 +78,7 @@ npm run preview
 
 ```text
 src/
-├── App.jsx                         # entrada da aplicação e estado de sessão
+├── App.tsx                         # entrada da aplicação e estado de sessão
 ├── components/                     # componentes visuais compartilhados
 ├── data/
 │   └── roles.js                    # perfis, menus e dados gerais demonstrativos
@@ -90,23 +92,27 @@ src/
     │   ├── attendance/             # frequência
     │   ├── equipment/              # equipamentos e manutenção
     │   ├── settings/               # configurações
-    │   └── admin.service.js        # operações previstas para a API administrativa
+    │   └── admin.service.ts        # operações previstas para a API administrativa
     ├── professor/
     │   ├── data/                   # conteúdo demonstrativo do professor
     │   ├── ProfessorOverview.jsx   # painel do professor
     │   ├── ProfessorFeature.jsx    # seleção das telas do perfil
-    │   └── professor.service.js    # operações previstas para a API do professor
+    │   └── professor.service.ts    # operações previstas para a API do professor
     ├── aluno/
     │   ├── data/                   # conteúdo demonstrativo do aluno
     │   ├── StudentOverview.jsx     # painel do aluno
     │   ├── StudentFeature.jsx      # seleção das telas do perfil
-    │   └── student.service.js      # operações previstas para a API do aluno
+    │   └── student.service.ts      # operações previstas para a API do aluno
     ├── auth/                       # tela de acesso e serviço de autenticação
+    │   ├── Login.tsx
+    │   └── auth.service.ts
     ├── dashboard/                  # estrutura compartilhada do painel e navegação
     └── shared/                     # telas reutilizáveis entre perfis
 ```
 
 As telas e os dados específicos ficam junto da feature correspondente. O layout do painel, os componentes visuais compartilhados e a comunicação HTTP ficam em áreas comuns. Assim, é possível desenvolver cada perfil sem concentrar toda a aplicação em um único arquivo.
+
+O TypeScript foi introduzido de forma gradual: os pontos centrais de autenticação, sessão e serviços HTTP já usam tipos, enquanto as telas existentes em JavaScript podem ser migradas conforme forem evoluídas. A configuração permite essa convivência durante a transição.
 
 ## Integração futura
 

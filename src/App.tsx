@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import Dashboard from "./features/dashboard/Dashboard.jsx";
-import Login from "./features/auth/Login.jsx";
-import { getCurrentUser, login, logout } from "./features/auth/auth.service.js";
-import { isApiMode } from "./lib/api/config.js";
+import Login from "./features/auth/Login.tsx";
+import { getCurrentUser, login, logout } from "./features/auth/auth.service";
+import type { AuthUser, Role } from "./features/auth/auth.types";
+import { ApiError } from "./lib/api/client";
+import { isApiMode } from "./lib/api/config";
 
 export default function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [isInitializing, setIsInitializing] = useState(isApiMode);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [authError, setAuthError] = useState("");
@@ -20,7 +22,9 @@ export default function App() {
         if (isMounted) setUser(currentUser);
       })
       .catch((error) => {
-        if (isMounted && error.status !== 401) setAuthError(error.message);
+        if (isMounted && !(error instanceof ApiError && error.status === 401)) {
+          setAuthError(error instanceof Error ? error.message : "Não foi possível validar sua sessão.");
+        }
       })
       .finally(() => {
         if (isMounted) setIsInitializing(false);
@@ -31,20 +35,20 @@ export default function App() {
     };
   }, []);
 
-  async function handleLogin(email, password, role) {
+  async function handleLogin(email: string, password: string, role: Role): Promise<void> {
     setIsLoggingIn(true);
     setAuthError("");
 
     try {
       setUser(await login({ email, password, role }));
     } catch (error) {
-      setAuthError(error.message);
+      setAuthError(error instanceof Error ? error.message : "Não foi possível entrar.");
     } finally {
       setIsLoggingIn(false);
     }
   }
 
-  async function handleLogout() {
+  async function handleLogout(): Promise<void> {
     await logout();
     setUser(null);
   }

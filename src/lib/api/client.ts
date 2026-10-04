@@ -1,7 +1,10 @@
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, "");
 
 export class ApiError extends Error {
-  constructor(message, { status, details } = {}) {
+  status?: number;
+  details?: unknown;
+
+  constructor(message: string, { status, details }: { status?: number; details?: unknown } = {}) {
     super(message);
     this.name = "ApiError";
     this.status = status;
@@ -9,7 +12,20 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiRequest(path, { method = "GET", body, signal } = {}) {
+interface ApiRequestOptions {
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+  body?: unknown;
+  signal?: AbortSignal;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+export async function apiRequest<TResponse = unknown>(
+  path: string,
+  { method = "GET", body, signal }: ApiRequestOptions = {},
+): Promise<TResponse> {
   if (!apiBaseUrl) {
     throw new Error("Defina VITE_API_BASE_URL para conectar a API.");
   }
@@ -26,7 +42,7 @@ export async function apiRequest(path, { method = "GET", body, signal } = {}) {
   });
 
   const responseText = await response.text();
-  let data;
+  let data: unknown;
 
   if (responseText) {
     try {
@@ -37,14 +53,17 @@ export async function apiRequest(path, { method = "GET", body, signal } = {}) {
   }
 
   if (!response.ok) {
-    const message = typeof data === "object" && data !== null
+    const message = isRecord(data)
       ? data.message ?? data.title
       : undefined;
-    throw new ApiError(message ?? `A solicitação falhou (${response.status}).`, {
+    throw new ApiError(
+      typeof message === "string" ? message : `A solicitação falhou (${response.status}).`,
+      {
       status: response.status,
       details: data,
-    });
+      },
+    );
   }
 
-  return data;
+  return data as TResponse;
 }
