@@ -68,7 +68,7 @@ export default function Dashboard({ email, name, role, onLogout }) {
         />
       )}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex w-[258px] flex-col border-r border-slate-100 bg-white px-5 py-6 transition-transform lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex w-[258px] flex-col overflow-y-auto overscroll-contain border-r border-slate-100 bg-white px-5 py-6 transition-transform lg:translate-x-0 ${
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
