@@ -1,96 +1,113 @@
 # GestãoFit
 
-Protótipo web de gestão de academia, desenvolvido com React, Vite e Tailwind CSS.
+O GestãoFit é uma aplicação web para apoiar a rotina de uma academia. O projeto está sendo desenvolvido como front-end em React: reúne em um único painel informações e ferramentas para administradores, professores e alunos, com áreas e menus específicos para cada perfil.
 
-## Iniciar o projeto
+## Sobre o projeto
+
+A proposta é tornar mais simples o acompanhamento das atividades da academia:
+
+- **Administrador:** visão geral da academia, alunos, financeiro, frequência, equipamentos e configurações.
+- **Professor:** visão geral, aulas, alunos, frequência, agenda e preferências profissionais.
+- **Aluno:** painel pessoal, treino, frequência, plano, agenda e preferências da conta.
+
+Cada perfil tem uma navegação e um conteúdo próprios. A interface é responsiva para diferentes tamanhos de tela e está em português.
+
+### Estado atual
+
+O projeto está na etapa de desenvolvimento do front-end. As telas usam conteúdo de demonstração local para permitir navegar e avaliar os fluxos sem depender de um servidor. O acesso também é demonstrativo: na tela de login, é possível entrar diretamente como administrador, professor ou aluno.
+
+Ainda não há autenticação real, persistência de dados ou conexão ativa com um banco de dados. A estrutura prevê serviços separados por funcionalidade para facilitar a futura ligação com um back-end.
+
+## Tecnologias
+
+- React 18 para componentes e interface.
+- Vite para desenvolvimento local e geração do build.
+- Tailwind CSS 4 para estilos responsivos.
+- Lucide React para ícones.
+
+## Requisitos
+
+- Node.js versão 18 ou superior.
+- npm, instalado junto com o Node.js.
+
+Para conferir as versões instaladas:
 
 ```bash
-npm install
-npm run dev
+node --version
+npm --version
 ```
 
-Para gerar a versão de produção:
+## Instalar e iniciar
+
+1. Abra um terminal na pasta do projeto.
+2. Instale as dependências:
+
+   ```bash
+   npm install
+   ```
+
+3. Inicie o servidor local de desenvolvimento:
+
+   ```bash
+   npm run dev
+   ```
+
+4. Abra no navegador o endereço mostrado pelo Vite no terminal, normalmente `http://localhost:5173`.
+5. Na tela inicial, escolha um perfil pelos atalhos de demonstração para explorar a respectiva área.
+
+O servidor atualiza a página automaticamente quando arquivos do projeto são alterados. Para interrompê-lo, use `Ctrl+C` no terminal em que ele está rodando.
+
+## Comandos disponíveis
+
+```bash
+npm run dev      # inicia o servidor local de desenvolvimento
+npm run build    # gera os arquivos otimizados de produção na pasta dist
+npm run preview  # serve localmente o build de produção
+```
+
+Para conferir localmente o resultado de produção:
 
 ```bash
 npm run build
+npm run preview
 ```
 
 ## Organização do código
 
 ```text
 src/
-├── App.jsx
-├── components/                 # Componentes compartilhados entre features
-├── data/                       # Perfis, menus e dados de demonstração
+├── App.jsx                         # entrada da aplicação e estado de sessão
+├── components/                     # componentes visuais compartilhados
+├── data/
+│   └── roles.js                    # perfis, menus e dados gerais demonstrativos
 ├── lib/
-│   └── api/                    # Cliente HTTP e configuração de integração
+│   └── api/                        # cliente HTTP e seleção do modo de dados
 └── features/
     ├── admin/
-    │   ├── admin.service.js    # Contratos de acesso aos endpoints administrativos
-    │   ├── attendance/         # Frequência e check-ins
-    │   ├── equipment/          # Equipamentos e manutenção
-    │   ├── finance/            # Receitas e pagamentos
-    │   ├── overview/           # Visão geral administrativa
-    │   ├── settings/           # Preferências da academia
-    │   ├── shared/             # Componentes compartilhados nas telas administrativas
-    │   └── students/           # Cadastro e consulta de alunos
-    ├── aluno/
-    │   ├── data/               # Dados demonstrativos e conteúdo do aluno
-    │   ├── student.service.js  # Acesso aos endpoints do aluno
-    │   ├── StudentFeature.jsx  # Seleção das telas do aluno
-    │   └── StudentOverview.jsx # Painel inicial do aluno
-    ├── auth/                   # Login e seleção do perfil demonstrativo
-    │   ├── Login.jsx
-    │   └── auth.service.js     # Login, sessão e encerramento da sessão
-    ├── dashboard/              # Layout compartilhado e seleção do perfil
+    │   ├── overview/               # painel administrativo
+    │   ├── students/               # consulta e cadastro demonstrativo de alunos
+    │   ├── finance/                # área financeira
+    │   ├── attendance/             # frequência
+    │   ├── equipment/              # equipamentos e manutenção
+    │   ├── settings/               # configurações
+    │   └── admin.service.js        # operações previstas para a API administrativa
     ├── professor/
-    │   ├── data/               # Dados demonstrativos e conteúdo do professor
-    │   ├── professor.service.js # Acesso aos endpoints do professor
-    │   ├── ProfessorFeature.jsx
-    │   └── ProfessorOverview.jsx
-    └── shared/                 # Componentes compartilhados entre perfis
+    │   ├── data/                   # conteúdo demonstrativo do professor
+    │   ├── ProfessorOverview.jsx   # painel do professor
+    │   ├── ProfessorFeature.jsx    # seleção das telas do perfil
+    │   └── professor.service.js    # operações previstas para a API do professor
+    ├── aluno/
+    │   ├── data/                   # conteúdo demonstrativo do aluno
+    │   ├── StudentOverview.jsx     # painel do aluno
+    │   ├── StudentFeature.jsx      # seleção das telas do perfil
+    │   └── student.service.js      # operações previstas para a API do aluno
+    ├── auth/                       # tela de acesso e serviço de autenticação
+    ├── dashboard/                  # estrutura compartilhada do painel e navegação
+    └── shared/                     # telas reutilizáveis entre perfis
 ```
 
-Cada perfil concentra suas próprias telas e dados. A navegação e os componentes visuais reutilizados ficam em módulos compartilhados.
+As telas e os dados específicos ficam junto da feature correspondente. O layout do painel, os componentes visuais compartilhados e a comunicação HTTP ficam em áreas comuns. Assim, é possível desenvolver cada perfil sem concentrar toda a aplicação em um único arquivo.
 
-## Preparação para o back-end
+## Integração futura
 
-O front-end tem um cliente HTTP centralizado em `src/lib/api/client.js` e serviços organizados por feature. Para alternar do modo demonstrativo para a API:
-
-1. Copie `.env.example` para `.env.local`.
-2. Configure `VITE_DATA_MODE=api` e informe a URL base em `VITE_API_BASE_URL`.
-3. Inicie o front-end novamente para o Vite carregar as variáveis.
-
-O modo padrão (`VITE_DATA_MODE=mock`) preserva o login demonstrativo atual. No modo `api`, o perfil deixa de ser selecionado pelo usuário: ele é retornado pelo servidor junto com a identidade autenticada.
-
-### Contrato inicial esperado
-
-As rotas abaixo são uma proposta de integração para o back-end futuro; ainda não existem neste protótipo.
-
-| Método | Rota | Uso |
-| --- | --- | --- |
-| `POST` | `/auth/login` | Recebe `{ "email": "...", "password": "..." }` e retorna `{ "user": { "id": "...", "name": "...", "email": "...", "role": "admin\|professor\|aluno" } }` |
-| `GET` | `/auth/me` | Retorna `{ "user": { ... } }` para a sessão atual; sem sessão, responde `401` |
-| `POST` | `/auth/logout` | Encerra a sessão no servidor |
-| `GET` | `/admin/dashboard`, `/admin/finance`, `/admin/attendance`, `/admin/equipment`, `/admin/settings` | Dados administrativos |
-| `GET`, `POST` | `/admin/students` | Consulta e cadastro de alunos |
-| `PUT` | `/admin/settings` | Atualiza configurações da academia |
-| `GET` | `/professor/dashboard`, `/professor/classes`, `/professor/students`, `/professor/attendance`, `/professor/schedule` | Dados do professor |
-| `GET` | `/student/dashboard`, `/student/workouts`, `/student/attendance`, `/student/plan`, `/student/schedule` | Dados do aluno |
-
-As respostas de erro devem usar JSON com `message` (ou `title`) e um status HTTP apropriado. O cliente envia cookies e credenciais nas solicitações; recomenda-se que o back-end use cookie de sessão `HttpOnly`, `Secure` e `SameSite`, além de configurar CORS e proteção CSRF de acordo com o ambiente.
-
-Os serviços e o fluxo de autenticação já estão preparados, mas as telas ainda exibem dados demonstrativos; cada tela precisará passar a consumir o serviço correspondente quando o back-end estiver disponível. As permissões devem sempre ser validadas no servidor — esconder menus ou validar o perfil no front-end não protege endpoints.
-
-## Publicar na Vercel
-
-O projeto está configurado como aplicação Vite estática. Para publicar:
-
-1. Envie o projeto para um repositório Git remoto.
-2. Na Vercel, importe esse repositório e mantenha os padrões identificados pelo arquivo `vercel.json`: comando `npm run build` e diretório de saída `dist`.
-3. Para publicar a demonstração do front-end antes do back-end, configure `VITE_DATA_MODE=mock` nas variáveis de ambiente do projeto Vercel.
-4. A cada novo deploy, a Vercel executará o build a partir do repositório.
-
-Quando a API estiver disponível, configure na Vercel `VITE_DATA_MODE=api` e `VITE_API_BASE_URL` com a URL HTTPS pública da API, por exemplo `https://api.exemplo.com/api`, e faça um novo deploy. Variáveis `VITE_*` são incluídas no código enviado ao navegador: não coloque nelas senhas, chaves privadas ou segredos. No modo API, o back-end também deverá permitir a origem do domínio Vercel via CORS e configurar corretamente cookies de sessão e proteção CSRF.
-
-O arquivo `.gitignore` exclui dependências, artefatos de build e arquivos `.env` locais; apenas `.env.example` deve ser versionado. A reescrita configurada na Vercel encaminha URLs da aplicação para `index.html`, permitindo adicionar rotas de front-end sem erro de página não encontrada.
+Já existe uma base de serviços por perfil e um cliente HTTP para organizar a futura comunicação com uma API. Esses serviços definem pontos de integração, mas as telas ainda apresentam dados locais demonstrativos. A autenticação e a persistência reais serão implementadas junto com o back-end, de acordo com os fluxos e contratos que forem definidos para ele.
